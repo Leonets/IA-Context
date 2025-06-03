@@ -4,6 +4,9 @@ import { handleExpectedTokenYield, handlePersonalHealthBar, handleTokenYield } f
 
 export function registerTools(server: McpServer) {
  
+  // [
+  //   { "role": "user", "content": "What is the current supply rate of usdc ?" }
+  // ]
   server.tool(
     "token-yield",
     {
@@ -59,6 +62,9 @@ export function registerTools(server: McpServer) {
   );
 
 
+  // [
+  //   { "role": "user", "content": "What is the expected supply rate change if i supply 10.000 usdc ?" }
+  // ]
   server.tool(
     "token-yield-expected",
     {
