@@ -121,9 +121,8 @@ export function registerTools(server: McpServer) {
 
 // Example request for MCP Inspector
 // [
-//     { "role": "user", "content": "What is the risk of being liquidated if bitcoin drops 10% given I hold this receipt #1#?" }
+//     { "role": "user", "content": "What is the risk of being liquidated if radix moves -10% given I hold this receipt #27# ?" }
 //   ]
-
 server.tool(
     "health-bar",
     {
@@ -158,7 +157,9 @@ server.tool(
 
       // Match the receipt number (e.g., #1#)
       const receiptMatch = last.match(receiptPattern);
+      console.log("receiptMatch ?:", receiptMatch);
       const receipt = receiptMatch ? `#${receiptMatch[1]}#` : null;
+      console.log("receipt ?:", receipt);
 
       console.log("Extracted token:", tokenKey);
       console.log("Extracted percentage change:", percentageChange);

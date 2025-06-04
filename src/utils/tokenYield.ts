@@ -46,10 +46,10 @@ export async function handleExpectedTokenYield(tokenKey: string): Promise<string
       - Total Supply: ${apy.totalSupply}
       - Total Borrow: ${apy.totalBorrow}
       - Available Liquidity: ${apy.availableLiquidity}
-      - Slope 1 to calculate the Borrow Rate:
+      - Slopes to calculate the Borrow Rate:
           Slope 1: 0%
-          Slope 1: 4%
-          Slope 1: 75%
+          Slope 2: 4%
+          Slope 3: 75%
       - Reserve Factor 30%: 30%
       - Optimal Usage: ${apy.optimalUsage}
       - LTV Limit: ${apy.LTVLimit}
@@ -289,7 +289,7 @@ export async function handlePersonalHealthBar(tokenKey: string, direction: strin
     console.log("currentPrice of the token :", tokenKey, currentPrice);
 
     // Formatting risk response
-    const currentBL = parseFloat(stats.borrowLimitUsedPercentage.toFixed(2));
+    const currentBL = parseFloat(stats.borrowLimitUsedPercentage!.toFixed(2));
     const projectedBL = (currentBL + 12).toFixed(2); // For example only — you'd adjust this with logic from actual data
     const volatileSupplyAmount = supplyVolatileToken[0]?.amount || "0";
 
@@ -307,7 +307,7 @@ export async function handlePersonalHealthBar(tokenKey: string, direction: strin
     console.log(`Expected Value if price goes ${direction} ${percentageChange}:`, expectedValue);
 
     const mcpResponse = `Your current borrow limit usage is ${currentBL}%. 
-      You have deposited ${volatileSupplyAmount} worth of ${tokenKey}. 
+      You have deposited ${currentValue} worth of ${tokenKey}. 
       If ${tokenKey} moves ${direction} 10%, 
       your supplied value will change from ${currentValue}usd to ${expectedValue}usd`;       
       // your projected borrow limit usage could rise to ${projectedBL}%, which may put you at risk of liquidation.`; 
