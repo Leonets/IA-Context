@@ -214,6 +214,7 @@ const tokenResourceMap: Record<string, string> = {
   bitcoin: "resource_rdx1t580qxc7upat7lww4l2c4jckacafjeudxj5wpjrrct0p3e82sq4y75",
   radix: "resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd",
   ethereum: "resource_rdx1th88qcj5syl9ghka2g9l7tw497vy5x6zaatyvgfkwcfe8n9jt2npww",
+  lsulp: "resource_rdx1thksg5ng70g9mmy9ne7wz0sc7auzrrwy7fmgcxzel2gvp8pj0xxfmf",
 };
 
 export async function handlePersonalHealthBar(tokenKey: string, direction: string, receipt: string, percentageChange: string): Promise<string> {
@@ -257,11 +258,12 @@ export async function handlePersonalHealthBar(tokenKey: string, direction: strin
     };    
 
     // Step 4: Extract and prepare new payload
-    const supplies = extractField(receiptData, "collaterals");
-    const cdps = [...supplies]; // duplicate of supplies
+    const supplies: never[] = [];
+    const cdps = extractField(receiptData, "collaterals");
     const borrows = extractField(receiptData, "loans");
 
     const tokenResource = tokenResourceMap[tokenKey.toLowerCase()];
+    console.log("tokenResource to be evaluated:", tokenResource);
     const supplyVolatileToken = extractField(receiptData, "collaterals", tokenResource);
     console.log("Amount supplied on volatile token:", supplyVolatileToken);
 
@@ -283,9 +285,20 @@ export async function handlePersonalHealthBar(tokenKey: string, direction: strin
     const healthResponse = await axios.post('https://backend-prod.rootfinance.xyz/api/markets/health-bar', finalPayload);
     const stats = healthResponse.data;
 
+    const tokenAliases: Record<string, string> = {
+      lsulp: 'caviarnine-lsu-pool-lp',
+      btc: 'bitcoin',
+      eth: 'ethereum',
+      xrd: 'radix'
+    };
+
     const assetsUsdPrices = await fetchCoinsPrices();
     console.log("assetsUsdPrices:", assetsUsdPrices);
-    const currentPrice = assetsUsdPrices?.[tokenKey.toLowerCase()] || 0;
+
+    // Translate to real key if alias exists
+    const realKey = tokenAliases[tokenKey.toLowerCase()] || tokenKey.toLowerCase();
+
+    const currentPrice = assetsUsdPrices?.[realKey.toLowerCase()] || 0;
     console.log("currentPrice of the token :", tokenKey, currentPrice);
 
     // Formatting risk response
@@ -306,7 +319,34 @@ export async function handlePersonalHealthBar(tokenKey: string, direction: strin
     const expectedValue = Number(volatileSupplyAmount) * expectedPrice;
     console.log(`Expected Value if price goes ${direction} ${percentageChange}:`, expectedValue);
 
+    //Calculate current total value of the CDP
+    let totalUsd = 0;
+    // Function to get the correct price key for a token
+    function getPriceForToken(token: string): number | undefined {
+      const priceKey = token === "lsulp" ? "caviarnine-lsu-pool-lp" : token;
+      return assetsUsdPrices ? assetsUsdPrices[priceKey] : undefined;
+    }
+
+    for (const cdp of cdps) {
+      const token = resourceToToken[cdp.address];
+      if (!token) {
+        console.warn(`Unknown token address: ${cdp.address}`);
+        continue;
+      }
+      const price = getPriceForToken(token);
+      console.log(`Price for ${token}:`, price);
+      if (price === undefined) {
+        console.warn(`Missing price for token: ${token}`);
+        continue;
+      }
+      const amount = parseFloat(cdp.amount);
+      totalUsd += amount * Number(price);
+    }
+    
+    console.log(`Total USD value: $${totalUsd.toFixed(2)}`);    
+
     const mcpResponse = `Your current borrow limit usage is ${currentBL}%. 
+      You have a total of ${totalUsd.toFixed(2)}usd in your CDP.
       You have deposited ${currentValue} worth of ${tokenKey}. 
       If ${tokenKey} moves ${direction} 10%, 
       your supplied value will change from ${currentValue}usd to ${expectedValue}usd`;       
@@ -321,6 +361,13 @@ export async function handlePersonalHealthBar(tokenKey: string, direction: strin
     return `Failed to fetch yield data for ${tokenKey}.`;
   }
 }
+
+
+
+// Invert tokenResourceMap to find token by address
+const resourceToToken = Object.fromEntries(
+  Object.entries(tokenResourceMap).map(([token, address]) => [address, token])
+);
 
 
 // const COINGECKO_TOKENS_LIST="radix,bitcoin,ethereum,tether,usd-coin,hug,caviarnine-lsu-pool-lp,wowo,early-radix"

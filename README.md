@@ -92,7 +92,7 @@ The third tool is helpful to know the risk of being liquidated by supposing a do
 
 ```
 [
-    { "role": "user", "content": "What is the risk of being liquidated if radix moves -10% given I hold this receipt #27# ?" }
+    { "role": "user", "content": "What is the risk of being liquidated if lsulp moves -10% given I hold this receipt #27# ?" }
   ]
 ```
 
@@ -101,9 +101,10 @@ You get an answer like this
 
 ```
 Your current borrow limit usage is 0.04%. 
-      You have deposited 3.479479854168794 worth of radix. 
-      If radix moves down 10%, 
-      your supplied value will change from 3.479479854168794usd to 3.1315318687519147usd
+      You have a total of 399.00usd in your CDP.
+      You have deposited 280.85115571225236 worth of lsulp. 
+      If lsulp moves down 10%, 
+      your supplied value will change from 280.85115571225236usd to 252.76604014102713usd
 ```
 
 ## Testing the Server

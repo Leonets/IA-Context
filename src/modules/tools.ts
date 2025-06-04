@@ -143,7 +143,7 @@ server.tool(
       const last = messages[messages.length - 1]?.content.toLowerCase();
 
       // Define regex patterns for extraction
-      const tokenPattern = /(bitcoin|radix|ethereum)/i;  // Detecting 'bitcoin', 'radix', or 'ethereum'
+      const tokenPattern = /(bitcoin|radix|ethereum|lsulp)/i;  // Detecting 'bitcoin', 'radix', or 'ethereum'
       const percentagePattern = /([-+]?\d{1,3})%/; // Captures numbers with optional +/- sign followed by '%' (e.g., -10%)
       const receiptPattern = /#(\d+)#/; // Captures the receipt like '#1#'
 
