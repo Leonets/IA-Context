@@ -2,6 +2,7 @@
 
 Scope of the project is to simply help users to be aware of some of the most useful events:
 
+- which is the current apy of a token available for supply/borrow
 - how much will the supply or borrow rate change given the new amount a user want to supply or borrow and given the current state of the pool.
 - how the risk of being liquidated changes if the value of a collateral changes
 
@@ -35,7 +36,7 @@ Supplying $10,000 USDC would decrease the Borrow APY from 73.3% to approximately
 ```
 
 
-# Tool 'Current Yield'  
+# Tool 'Current APY'  
 
 The first tool is useful if you want to be updated on current rates
 
@@ -56,7 +57,7 @@ Current yield for usd-coin:
       - Borrow APY: 31.93%
 ```
 
-# Tool 'Expected Yield' 
+# Tool 'Expected APY' 
 
 The second tool is helpful to know how rates will change after a supply
 
@@ -86,7 +87,7 @@ Current yield for usd-coin:
       - LTV Limit: 0.8
 ```
 
-# Tool 'Health Bar' 
+# Tool 'Liquidation Risk' 
 
 The third tool is helpful to know the risk of being liquidated by supposing a down/up move in the underlying collateral
 
@@ -106,6 +107,35 @@ Your current borrow limit usage is 0.04%.
       If lsulp moves down 10%, 
       your supplied value will change from 280.85115571225236usd to 252.76604014102713usd
 ```
+
+# End to End 
+
+You can use a client like VS Code or Windsurf configured with the public MCP Server at 
+https://ia.zerocollateral.eu/sse to ask something like 
+
+**use ZeroCollateral tools to tell me which is the current yield by supplying usdc**
+
+![Current API](docs/currentusdc.png)
+
+![Current API](docs/currentusdc2.png)
+
+**What is the expected API rate change if i supply 10.000 usdc ?**
+
+![Expected API](docs/expectedapy2.png)
+
+![Expected API](docs/expectedapyusdc.png)
+
+![Expected API](docs/expectedapy.png)
+
+**What is the risk of being liquidated if radix moves -10% given I hold this receipt #27# ? **
+
+![Liquidation Risk example 1](docs/risk1.png)
+
+![Liquidation Risk example 2](docs/risk2.png)
+
+![Liquidation Risk example 3](docs/risk3.png)
+
+
 
 ## Testing the Server
 
@@ -139,33 +169,6 @@ npm run dev
 ```
 
 This will start the server with live reloading and detailed logs.
-
-# End to End 
-
-You can use a client like VS Code or Windsurf configured with the public MCP Server at 
-https://ia.zerocollateral.eu/sse to ask something like 
-
-**use ZeroCollateral tools to tell me which is the current yield by supplying usdc**
-
-![Current API](docs/currentusdc.png)
-
-![Current API](docs/currentusdc2.png)
-
-**What is the expected API rate change if i supply 10.000 usdc ?**
-
-![Expected API](docs/expectedapy2.png)
-
-![Expected API](docs/expectedapyusdc.png)
-
-![Expected API](docs/expectedapy.png)
-
-**What is the risk of being liquidated if radix moves -10% given I hold this receipt #27# ? **
-
-![Liquidation Risk example 1](docs/risk1.png)
-
-![Liquidation Risk example 2](docs/risk2.png)
-
-![Liquidation Risk example 3](docs/risk3.png)
 
 
 # Disclaimer 
