@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { handleExpectedTokenYield, handlePersonalHealthBar, handleTokenYield } from "../utils/tokenYield";
+import { handleExpectedTokenYield, handleLiquidationRisk, handleTokenYield } from "../utils/root";
 
 export function registerTools(server: McpServer) {
  
@@ -8,7 +8,7 @@ export function registerTools(server: McpServer) {
   //   { "role": "user", "content": "What is the current supply rate of usdc ?" }
   // ]
   server.tool(
-    "token-yield",
+    "current api",
     {
       messages: z.array(
         z.object({
@@ -66,7 +66,7 @@ export function registerTools(server: McpServer) {
   //   { "role": "user", "content": "What is the expected supply rate change if i supply 10.000 usdc ?" }
   // ]
   server.tool(
-    "token-yield-expected",
+    "expected api",
     {
       messages: z.array(
         z.object({
@@ -112,7 +112,7 @@ export function registerTools(server: McpServer) {
         content: [
           {
             type: "text",
-            text: "Please specify a token like USDC, USDT, or ETH to get yield info.",
+            text: "Please specify a token like USDC, USDT, Bitcoin, ETH, Radix or LsuLp to get yield info.",
           },
         ],
       };
@@ -124,7 +124,7 @@ export function registerTools(server: McpServer) {
 //     { "role": "user", "content": "What is the risk of being liquidated if radix moves -10% given I hold this receipt #27# ?" }
 //   ]
 server.tool(
-    "health-bar",
+    "liquidation risk",
     {
       messages: z.array(
         z.object({
@@ -143,7 +143,7 @@ server.tool(
       const last = messages[messages.length - 1]?.content.toLowerCase();
 
       // Define regex patterns for extraction
-      const tokenPattern = /(bitcoin|radix|ethereum|lsulp)/i;  // Detecting 'bitcoin', 'radix', or 'ethereum'
+      const tokenPattern = /(bitcoin|radix|ethereum|lsulp|hug|wowo|early)/i;  // Detecting 'bitcoin', 'radix', or 'ethereum'
       const percentagePattern = /([-+]?\d{1,3})%/; // Captures numbers with optional +/- sign followed by '%' (e.g., -10%)
       const receiptPattern = /#(\d+)#/; // Captures the receipt like '#1#'
 
@@ -171,7 +171,7 @@ server.tool(
         console.log("I will look for your current risk given the data extracted:", { tokenKey, percentageChange, receipt, direction });
 
         // Fetch risk info using the extracted data
-        const result = await handlePersonalHealthBar(tokenKey, direction, receipt, percentageChange);
+        const result = await handleLiquidationRisk(tokenKey, direction, receipt, percentageChange);
           return {
             content: [{ type: "text", text: result }],
           };
@@ -181,7 +181,7 @@ server.tool(
         content: [
           {
             type: "text",
-            text: "Please specify a receipt in the correct format like #1#",
+            text: "Please specify a receipt in the correct format like #1# and one of the tokens like Bitcoin, Radix, Ethereum, LsuLp, Hug, Wowo or Early along with a percentage change (e.g., -10%).",
           },
         ],
       };

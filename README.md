@@ -142,9 +142,31 @@ This will start the server with live reloading and detailed logs.
 
 # End to End 
 
-use Root tools to tell me which is the current yield by supplying usdc 
+You can use a client like VS Code or Windsurf configured with the public MCP Server at 
+https://ia.zerocollateral.eu/sse to ask something like 
 
-//TODO
+**use ZeroCollateral tools to tell me which is the current yield by supplying usdc**
+
+![Current API](docs/currentusdc.png)
+
+![Current API](docs/currentusdc2.png)
+
+**What is the expected API rate change if i supply 10.000 usdc ?**
+
+![Expected API](docs/expectedapy2.png)
+
+![Expected API](docs/expectedapyusdc.png)
+
+![Expected API](docs/expectedapy.png)
+
+**What is the risk of being liquidated if radix moves -10% given I hold this receipt #27# ? **
+
+![Liquidation Risk example 1](docs/risk1.png)
+
+![Liquidation Risk example 2](docs/risk2.png)
+
+![Liquidation Risk example 3](docs/risk3.png)
+
 
 # Disclaimer 
 

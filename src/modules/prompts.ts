@@ -17,7 +17,7 @@ export function registerPrompts(server: McpServer) {
   );
 
   server.prompt(
-    "current-rate",
+    "current apy",
     {
       token: z.string()
     },
@@ -34,24 +34,24 @@ export function registerPrompts(server: McpServer) {
     })
   );
 
-  // server.prompt(
-  //   "expected-rate",
-  //   {
-  //     token: z.string(),
-  //     amount: z.string()
-  //   },
-  //   ({ token, amount }) => ({
-  //     messages: [
-  //       {
-  //         role: "user",
-  //         content: {
-  //           type: "text",
-  //           text: `What is the expected supply rate change if i supply ${amount} of ${token} ?`
-  //         }
-  //       }
-  //     ]
-  //   })
-  // );
+  server.prompt(
+    "expected apy",
+    {
+      token: z.string(),
+      amount: z.string()
+    },
+    ({ token, amount }) => ({
+      messages: [
+        {
+          role: "user",
+          content: {
+            type: "text",
+            text: `What is the expected supply rate change if i supply ${amount} of ${token} ?`
+          }
+        }
+      ]
+    })
+  );
 
   // server.prompt(
   //   "health-bar",
@@ -74,7 +74,7 @@ export function registerPrompts(server: McpServer) {
   // );
   
   server.prompt(
-    "health-bar",
+    "liquidation risk",
     {
       token: z.string(),
       expectedMovement: z.string(),
@@ -86,7 +86,7 @@ export function registerPrompts(server: McpServer) {
           role: "user",
           content: {
             type: "text",
-            text: `What is the risk of being liquidated if ${token} moves ${expectedMovement} given I hold this receipt #${receiptId}#?`
+            text: `What is the risk of being liquidated if ${token} moves ${expectedMovement} given this receipt #${receiptId}#?`
           }
         }
       ]
