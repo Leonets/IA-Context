@@ -1,4 +1,22 @@
 // mcp/src/utils/getTokenApy.ts
+import { z } from "zod";
+
+export const tokensMap = {
+  usdc: "usdc",
+  usdt: "usdt",
+  xWbtc: "xWbtc",
+  xEth: "xEth",
+  xrd: "xrd",
+  lsulp: "lsulp",
+  wowo: "wowo",
+  early: "early",
+  hug: "hug"
+} as const;
+
+export const tokensDirection = {
+  up: "up",
+  down: "down"
+} as const;
 
 type StatsResponse = {
   assets: {
@@ -17,6 +35,10 @@ type StatsResponse = {
     };
   };
 };
+
+
+export const AllowedTokens = z.enum(Object.keys(tokensMap) as [keyof typeof tokensMap]);
+export const AllowedDirection = z.enum(Object.keys(tokensDirection) as [keyof typeof tokensDirection]);
 
 export function getApyExtendedFromStats(stats: StatsResponse, tokenKey: string): { 
     supplyAPY: number; borrowAPY: number,

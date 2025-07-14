@@ -1,11 +1,15 @@
 // mcp/src/handlers/tokenYield.ts
 
 import axios from 'axios';
+const https = require('https');
 import { getApyExtendedFromStats, getApyFromStats } from './getTokenApy';
 
 export async function handleTokenYield(tokenKey: string): Promise<string> {
   try {
-    const statsResponse = await axios.get('https://backend-prod.rootfinance.xyz/api/markets/stats'); // replace with real port
+
+    const agent = new https.Agent({ rejectUnauthorized: false });
+
+    const statsResponse = await axios.get('https://backend-prod.rootfinance.xyz/api/markets/stats', { httpsAgent: agent }); // replace with real port
     const stats = statsResponse.data;
 
     const apy = getApyFromStats(stats, tokenKey);

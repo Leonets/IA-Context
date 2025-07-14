@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { AllowedTokens, AllowedDirection } from "../utils/getTokenApy";
 
 export function registerPrompts(server: McpServer) {
   server.prompt(
@@ -17,9 +18,9 @@ export function registerPrompts(server: McpServer) {
   );
 
   server.prompt(
-    "current apy",
+    "current-apy",
     {
-      token: z.string()
+      token: AllowedTokens
     },
     ({ token }) => ({
       messages: [
@@ -27,7 +28,7 @@ export function registerPrompts(server: McpServer) {
           role: "user",
           content: {
             type: "text",
-            text: `What is the current supply rate of ${token} ?`
+            text: `What is the current APY of ${token} ?`
           }
         }
       ]
@@ -35,9 +36,9 @@ export function registerPrompts(server: McpServer) {
   );
 
   server.prompt(
-    "expected apy",
+    "expected-apy",
     {
-      token: z.string(),
+      token: AllowedTokens,
       amount: z.string()
     },
     ({ token, amount }) => ({
@@ -51,7 +52,7 @@ export function registerPrompts(server: McpServer) {
         }
       ]
     })
-  );
+  );  
 
   // server.prompt(
   //   "health-bar",
@@ -74,11 +75,13 @@ export function registerPrompts(server: McpServer) {
   // );
   
   server.prompt(
-    "liquidation risk",
+    "liquidation-risk",
     {
-      token: z.string(),
-      expectedMovement: z.string(),
-      receiptId: z.string()
+      token: AllowedTokens,
+      expectedMovement: AllowedDirection,
+      receiptId: z.string().regex(/^#\d+#$/, {
+        message: "receiptId must be in the format #number# (e.g., #27#)",
+      })
     },
     ({ token, expectedMovement, receiptId }) => ({
       messages: [

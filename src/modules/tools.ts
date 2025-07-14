@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { handleExpectedTokenYield, handleLiquidationRisk, handleTokenYield } from "../utils/root";
+import { AllowedTokens, AllowedDirection } from "../utils/getTokenApy";
 
 export function registerTools(server: McpServer) {
  
@@ -8,23 +9,12 @@ export function registerTools(server: McpServer) {
   //   { "role": "user", "content": "What is the current supply rate of usdc ?" }
   // ]
   server.tool(
-    "current api",
+    "current-apy",
     {
-      messages: z.array(
-        z.object({
-          role: z.string(),
-          content: z.string(),
-        })
-      ),
-    },
-    async ({ messages }) => {
-      console.log("Incoming messages:", JSON.stringify(messages, null, 2));
-
-      if (!Array.isArray(messages) || messages.length === 0) {
-        throw new Error("Invalid request: 'messages' must be a non-empty array.");
-      }
-
-      const last = messages[messages.length - 1]?.content.toLowerCase();
+      token: AllowedTokens
+    },    
+    async ({ token }) => {
+      console.log("Current APY Token requested:", token);
 
       const tokenMap = {
         usdc: "usd-coin",
@@ -34,7 +24,7 @@ export function registerTools(server: McpServer) {
         lsulp: "caviarnine-lsu-pool-lp",
       };
 
-      const matchedToken = Object.keys(tokenMap).find(t => last.includes(t));
+      const matchedToken = Object.keys(tokenMap).find(t => token.includes(t));
       const tokenKey = matchedToken && matchedToken in tokenMap ? tokenMap[matchedToken as keyof typeof tokenMap] : null;
 
 
@@ -66,23 +56,13 @@ export function registerTools(server: McpServer) {
   //   { "role": "user", "content": "What is the expected supply rate change if i supply 10.000 usdc ?" }
   // ]
   server.tool(
-    "expected api",
+    "expected-apy",
     {
-      messages: z.array(
-        z.object({
-          role: z.string(),
-          content: z.string(),
-        })
-      ),
+      token: AllowedTokens,
+      amount: z.string()
     },
-    async ({ messages }) => {
-      console.log("Incoming messages:", JSON.stringify(messages, null, 2));
-
-      if (!Array.isArray(messages) || messages.length === 0) {
-        throw new Error("Invalid request: 'messages' must be a non-empty array.");
-      }
-
-      const last = messages[messages.length - 1]?.content.toLowerCase();
+    async ({ token, amount }) => {
+      console.log("Excpected APY changes with amount and token :", amount, token);
 
       const tokenMap = {
         usdc: "usd-coin",
@@ -93,7 +73,7 @@ export function registerTools(server: McpServer) {
         lsulp: "caviarnine-lsu-pool-lp",
       };
 
-      const matchedToken = Object.keys(tokenMap).find(t => last.includes(t));
+      const matchedToken = Object.keys(tokenMap).find(t => token.includes(t));
       const tokenKey = matchedToken && matchedToken in tokenMap ? tokenMap[matchedToken as keyof typeof tokenMap] : null;
 
       console.log("matchedToken:", matchedToken);
@@ -124,58 +104,38 @@ export function registerTools(server: McpServer) {
 //     { "role": "user", "content": "What is the risk of being liquidated if radix moves -10% given I hold this receipt #27# ?" }
 //   ]
 server.tool(
-    "liquidation risk",
+    "liquidation-risk",
     {
-      messages: z.array(
-        z.object({
-          role: z.string(),
-          content: z.string(),
-        })
-      ),
+      token: AllowedTokens,
+      expectedDirection: AllowedDirection,
+      expectedMovement: z.string(),
+      receiptId: z.string().regex(/^#\d+#$/, {
+        message: "receiptId must be in the format #number# (e.g., #271#)",
+      }),
     },
-    async ({ messages }) => {
-      console.log("Incoming messages:", JSON.stringify(messages, null, 2));
+    async ({ token, expectedDirection, expectedMovement, receiptId }) => {
+      console.log("Liquidation risk requested for token:", token, "with expected movement:", expectedMovement, "with expected direction:", expectedDirection, "and receipt ID:", receiptId);
 
-      if (!Array.isArray(messages) || messages.length === 0) {
-        throw new Error("Invalid request: 'messages' must be a non-empty array.");
-      }
+      const tokenMap = {
+        usdc: "usd-coin",
+        bitcoin: "bitcoin",
+        usdt: "tether",
+        ethereum: "ethereum",
+        radix: "radix",
+        lsulp: "caviarnine-lsu-pool-lp",
+      };
 
-      const last = messages[messages.length - 1]?.content.toLowerCase();
+      const matchedToken = Object.keys(tokenMap).find(t => token.includes(t));
+      const tokenKey = matchedToken && matchedToken in tokenMap ? tokenMap[matchedToken as keyof typeof tokenMap] : null;
 
-      // Define regex patterns for extraction
-      const tokenPattern = /(bitcoin|radix|ethereum|lsulp|hug|wowo|early)/i;  // Detecting 'bitcoin', 'radix', or 'ethereum'
-      const percentagePattern = /([-+]?\d{1,3})%/; // Captures numbers with optional +/- sign followed by '%' (e.g., -10%)
-      const receiptPattern = /#(\d+)#/; // Captures the receipt like '#1#'
+      console.log("matchedToken:", matchedToken);
+      console.log("tokenKey:", tokenKey);
 
-      // Match the token (e.g., bitcoin, radix, ethereum)
-      const tokenMatch = last.match(tokenPattern);
-      const tokenKey = tokenMatch ? tokenMatch[0] : null;
-
-      // Match the percentage change (e.g., -10%)
-      const percentageMatch = last.match(percentagePattern);
-      const percentageChange = percentageMatch ? percentageMatch[0] : null;
-
-      // Match the receipt number (e.g., #1#)
-      const receiptMatch = last.match(receiptPattern);
-      console.log("receiptMatch ?:", receiptMatch);
-      const receipt = receiptMatch ? `#${receiptMatch[1]}#` : null;
-      console.log("receipt ?:", receipt);
-
-      console.log("Extracted token:", tokenKey);
-      console.log("Extracted percentage change:", percentageChange);
-      console.log("Extracted receipt:", receipt);
-
-      // If token and other data are extracted, proceed to API interaction
-      if (tokenKey && percentageChange && receipt) {
-        const direction = percentageChange.startsWith('-') ? 'down' : 'up'; // Direction based on percentage
-        console.log("I will look for your current risk given the data extracted:", { tokenKey, percentageChange, receipt, direction });
-
-        // Fetch risk info using the extracted data
-        const result = await handleLiquidationRisk(tokenKey, direction, receipt, percentageChange);
-          return {
-            content: [{ type: "text", text: result }],
-          };
-      }
+      // Fetch risk info using the extracted data
+      const result = await handleLiquidationRisk(tokenKey!, expectedDirection, receiptId, expectedMovement);
+        return {
+          content: [{ type: "text", text: result }],
+        };
 
       return {
         content: [
