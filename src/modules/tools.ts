@@ -20,7 +20,7 @@ export function registerTools(server: McpServer) {
         usdc: "usd-coin",
         bitcoin: "bitcoin",
         usdt: "tether",
-        ethereum: "radix",
+        ethereum: "ethereum",
         lsulp: "caviarnine-lsu-pool-lp",
       };
 
@@ -121,7 +121,7 @@ server.tool(
         bitcoin: "bitcoin",
         usdt: "tether",
         ethereum: "ethereum",
-        radix: "radix",
+        radix: "xrd",
         lsulp: "caviarnine-lsu-pool-lp",
       };
 
