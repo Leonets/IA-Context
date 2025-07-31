@@ -2,12 +2,25 @@
 import { z } from "zod";
 
 export const tokensMap = {
-  usdc: "usdc",
-  usdt: "usdt",
-  xWbtc: "xWbtc",
-  xEth: "xEth",
-  xrd: "xrd",
+  // usdc: "usdc",
+  xUsdc: "xusdc",
+
+  // usdt: "usdt",  
+  xUsdt: "xusdt",  
+  // tether: "usdt",
+
+  // xWbtc: "xWbtc",
+  // xEth: "xEth",
   lsulp: "lsulp",
+
+  // bitcoin: "bitcoin",
+  // ethereum: "ethereum",
+  xWbtc: "bitcoin",
+  xEth: "ethereum",
+
+  xrd: "xrd",
+  radix: "xrd",
+
   wowo: "wowo",
   early: "early",
   hug: "hug"

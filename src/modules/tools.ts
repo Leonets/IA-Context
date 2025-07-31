@@ -3,6 +3,29 @@ import { z } from "zod";
 import { handleExpectedTokenYield, handleLiquidationRisk, handleTokenYield } from "../utils/root";
 import { AllowedTokens, AllowedDirection } from "../utils/getTokenApy";
 
+export const tokenMap = {
+    // usdc: "usd-coin",
+    xUsdc: "usd-coin",
+
+    // bitcoin: "bitcoin",
+    xWbtc: "bitcoin",
+
+    xUsdt: "tether",
+    // usdt: "tether",
+    // tether: "tether",
+
+    // ethereum: "ethereum",
+    xEth: "ethereum",
+
+    lsulp: "caviarnine-lsu-pool-lp",
+    hug: "hug",
+    xrd: "xrd",
+    radix: "xrd",
+    wowo: "wowo",
+    early: "early",
+  };
+
+
 export function registerTools(server: McpServer) {
  
   // [
@@ -16,17 +39,8 @@ export function registerTools(server: McpServer) {
     async ({ token }) => {
       console.log("Current APY Token requested:", token);
 
-      const tokenMap = {
-        usdc: "usd-coin",
-        bitcoin: "bitcoin",
-        usdt: "tether",
-        ethereum: "ethereum",
-        lsulp: "caviarnine-lsu-pool-lp",
-      };
-
       const matchedToken = Object.keys(tokenMap).find(t => token.includes(t));
       const tokenKey = matchedToken && matchedToken in tokenMap ? tokenMap[matchedToken as keyof typeof tokenMap] : null;
-
 
       console.log("matchedToken:", matchedToken);
       console.log("tokenKey:", tokenKey);
@@ -44,7 +58,7 @@ export function registerTools(server: McpServer) {
         content: [
           {
             type: "text",
-            text: "Please specify a token like USDC, USDT, or ETH to get yield info.",
+            text: "Please specify a token like xUsdc, xUsdt, xWbtc, xEth, xrd, radix, lsulp, hug, wowo or early get yield info.",
           },
         ],
       };
@@ -63,15 +77,6 @@ export function registerTools(server: McpServer) {
     },
     async ({ token, amount }) => {
       console.log("Excpected APY changes with amount and token :", amount, token);
-
-      const tokenMap = {
-        usdc: "usd-coin",
-        bitcoin: "bitcoin",
-        usdt: "tether",
-        ethereum: "ethereum",
-        radix: "radix",
-        lsulp: "caviarnine-lsu-pool-lp",
-      };
 
       const matchedToken = Object.keys(tokenMap).find(t => token.includes(t));
       const tokenKey = matchedToken && matchedToken in tokenMap ? tokenMap[matchedToken as keyof typeof tokenMap] : null;
@@ -92,7 +97,7 @@ export function registerTools(server: McpServer) {
         content: [
           {
             type: "text",
-            text: "Please specify a token like USDC, USDT, Bitcoin, ETH, Radix or LsuLp to get yield info.",
+            text: "Please specify a token like xUsdc, xUsdt, xWbtc, xEth, xrd, radix, lsulp, hug, wowo or early to get expected apy info.",
           },
         ],
       };
@@ -116,32 +121,26 @@ server.tool(
     async ({ token, expectedDirection, expectedMovement, receiptId }) => {
       console.log("Liquidation risk requested for token:", token, "with expected movement:", expectedMovement, "with expected direction:", expectedDirection, "and receipt ID:", receiptId);
 
-      const tokenMap = {
-        usdc: "usd-coin",
-        bitcoin: "bitcoin",
-        usdt: "tether",
-        ethereum: "ethereum",
-        radix: "xrd",
-        lsulp: "caviarnine-lsu-pool-lp",
-      };
-
       const matchedToken = Object.keys(tokenMap).find(t => token.includes(t));
       const tokenKey = matchedToken && matchedToken in tokenMap ? tokenMap[matchedToken as keyof typeof tokenMap] : null;
 
       console.log("matchedToken:", matchedToken);
       console.log("tokenKey:", tokenKey);
 
-      // Fetch risk info using the extracted data
-      const result = await handleLiquidationRisk(tokenKey!, expectedDirection, receiptId, expectedMovement);
-        return {
-          content: [{ type: "text", text: result }],
-        };
+
+      if (tokenKey) {      
+        // Fetch risk info using the extracted data
+        const result = await handleLiquidationRisk(tokenKey!, expectedDirection, receiptId, expectedMovement);
+          return {
+            content: [{ type: "text", text: result }],
+          };
+      }
 
       return {
         content: [
           {
             type: "text",
-            text: "Please specify a receipt in the correct format like #1# and one of the tokens like Bitcoin, Radix, Ethereum, LsuLp, Hug, Wowo or Early along with a percentage change (e.g., -10%).",
+            text: "Please specify a token like xUsdc, xUsdt, xWbtc, xEth, xrd, radix, lsulp, hug, wowo or early along with a percentage change (e.g., -10%).",
           },
         ],
       };
