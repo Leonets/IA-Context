@@ -23,8 +23,14 @@ export const tokensMap = {
 
   wowo: "wowo",
   early: "early",
-  hug: "hug"
+  hug: "hug",
+
+  husdc: "binance-bridged-usdc-bnb-smart-chain",
+  husdt: "usdt0",
+  hbtc: "wrapped-bitcoin",
+  heth: "weth",
 } as const;
+
 
 export const tokensDirection = {
   up: "up",

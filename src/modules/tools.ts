@@ -23,6 +23,11 @@ export const tokenMap = {
     radix: "xrd",
     wowo: "wowo",
     early: "early",
+
+    husdc: "binance-bridged-usdc-bnb-smart-chain",
+    husdt: "usdt0",
+    hbtc: "wrapped-bitcoin",
+    heth: "weth",    
   };
 
 

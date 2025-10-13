@@ -85,8 +85,19 @@ const tokenResourceMap: Record<string, string> = {
   lsulp: "resource_rdx1thksg5ng70g9mmy9ne7wz0sc7auzrrwy7fmgcxzel2gvp8pj0xxfmf",
   hug: "resource_rdx1t5kmyj54jt85malva7fxdrnpvgfgs623yt7ywdaval25vrdlmnwe97",
   usdc: "resource_rdx1t4upr78guuapv5ept7d7ptekk9mqhy605zgms33mcszen8l9fac8vf",
-  usdt: "resource_rdx1thrvr3xfs2tarm2dl9emvs26vjqxu6mqvfgvqjne940jv0lnrrg7rw"  
+  usdt: "resource_rdx1thrvr3xfs2tarm2dl9emvs26vjqxu6mqvfgvqjne940jv0lnrrg7rw",
+  husdc: "resource_rdx1thxj9m87sn5cc9ehgp9qxp6vzeqxtce90xm5cp33373tclyp4et4gv",
+  husdt: "resource_rdx1th4v03gezwgzkuma6p38lnum8ww8t4ds9nvcrkr2p9ft6kxx3kxvhe",
+  hbtc: "resource_rdx1t58kkcqdz0mavfz98m98qh9m4jexyl9tacsvlhns6yxs4r6hrm5re5",
+  heth: "resource_rdx1th09yvv7tgsrv708ffsgqjjf2mhy84mscmj5jwu4g670fh3e5zgef0"
 };
+
+
+
+// HETH_RESOURCE=resource_rdx1th09yvv7tgsrv708ffsgqjjf2mhy84mscmj5jwu4g670fh3e5zgef0
+// HUSDT_RESOURCE=resource_rdx1th4v03gezwgzkuma6p38lnum8ww8t4ds9nvcrkr2p9ft6kxx3kxvhe
+// HUSDC_RESOURCE=resource_rdx1thxj9m87sn5cc9ehgp9qxp6vzeqxtce90xm5cp33373tclyp4et4gv
+// HBTC_RESOURCE=resource_rdx1t58kkcqdz0mavfz98m98qh9m4jexyl9tacsvlhns6yxs4r6hrm5re5
 
 export async function handleLiquidationRisk(tokenKey: string, direction: string, receipt: string, percentageChange: string): Promise<string> {
   try {
@@ -150,6 +161,10 @@ export async function handleLiquidationRisk(tokenKey: string, direction: string,
       hug: 'hug',
       wowo: 'wowo',
       early: 'early-radix',
+      husdc: 'binance-bridged-usdc-bnb-smart-chain',
+      husdt: 'usdt0',
+      hbtc: 'wrapped-bitcoin',
+      heth: 'weth'
     };
 
     const assetsUsdPrices = await fetchCoinsPrices();
@@ -225,7 +240,7 @@ const resourceToToken = Object.fromEntries(
   Object.entries(tokenResourceMap).map(([token, address]) => [address, token])
 );
 
-const COINGECKO_TOKENS_LIST="radix,bitcoin,ethereum,caviarnine-lsu-pool-lp,hug,wowo,early-radix,tether,usd-coin";
+const COINGECKO_TOKENS_LIST="radix,bitcoin,ethereum,caviarnine-lsu-pool-lp,hug,wowo,early-radix,tether,usd-coin,binance-bridged-usdc-bnb-smart-chain,wrapped-bitcoin,usdt0,weth";
 
 
 export async function fetchCoinsPrices() {
